@@ -1,11 +1,29 @@
 .wrapper {
-  height:100vh;
+  height: 100vh;
   background-color: black;
+}
+
+.overlay {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.prompt {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 4em;
 }
 
 .team {
   display: inline-block;
-  height:100%;
+  height: 100%;
   text-align: center;
   font-size: 70px;
   color: white;
@@ -13,20 +31,24 @@
 }
 
 #teamA {
-  float:left;
-  background-color: #2A2740;
-  width:50%;
+  float: left;
+  background-color: #2a2740;
+  width: 50%;
 }
 
 #teamB {
-  float:right;
-  background-color: #91CBC0;
-  width:50%;
+  float: right;
+  background-color: #91cbc0;
+  width: 50%;
+}
+
+.teamID {
+  margin-top: 16px;
 }
 
 #join {
   clear: both;
-  background-color: #F9D047;
+  background-color: #f9d047;
   display: block;
   text-align: center;
   font-size: 70px;
