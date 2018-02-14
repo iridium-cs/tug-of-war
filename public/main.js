@@ -3,6 +3,7 @@
 
   // Create Socket
   var socket = io();
+  var team;
 
 
   // Callbacks that emit info to server
