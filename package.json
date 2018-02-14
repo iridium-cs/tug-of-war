@@ -1,0 +1,25 @@
+{
+  "name": "tug-of-war",
+  "version": "1.0.0",
+  "description": "websocket tug of war",
+  "main": "index.js",
+  "scripts": {
+    "test": "start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iridium-cs/tug-of-war.git"
+  },
+  "keywords": [
+    "websockets",
+    "socket.io",
+    "realtime",
+    "game"
+  ],
+  "author": "iridium-cs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iridium-cs/tug-of-war/issues"
+  },
+  "homepage": "https://github.com/iridium-cs/tug-of-war#readme"
+}
