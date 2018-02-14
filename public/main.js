@@ -72,6 +72,9 @@ $(function() {
   });
 
   socket.on("updateScore", function(scoreObj) {
+    if (!gameStarted) {
+      return;
+    }
     if (!team) {
       $promptWrap.show();
       $promptSuper.text("Game in progress, please wait for next round");
