@@ -15,23 +15,57 @@ server.listen(port, function () {
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-// Game
+// Game Data
 let numPlayers = 0;
 let teamAScore = 0;
 let teamBScore = 0;
+let started = false;
+
+let teams = ['teamA', 'teamB'];
+let teamCount = [0, 0];
 
 io.on('connection', function(socket) {
 
-  let addedPlayer = false;
+  function countdown(time) {
+    if (time > 0) {
+      socket.broadcast.emit('countdown', time); // emit new countdown num
+      setTimeout(1000, countdown(time-1)) // calls itself again after one sec
+    } else {
+      started = true;
+      socket.broadcast.emit('start') // tells all sockets the game has begun
+    }
+  }
+
+  function getWeightScores() { // weights scores, finds difference
+    let weightedA = teamAScore * teamCount[0] / numPlayers;
+    let weightedB = teamAScore * teamCount[1] / numPlayers;
+    return (weightedA - weightedB);
+  }
+
+  function resetGame() {
+    // resets game variables to defaults
+    numPlayers = 0;
+    teamAScore = 0;
+    teamBScore = 0;
+    started = false;
+    teamCount[0] = 0;
+    teamCount[1] = 0;
+  }
+
+  socket.on('reset', function() { // called by all active sockets when game ends
+    socket.addedPlayer = false;
+  })
 
   socket.on('newPlayer', function(player) {
-    if (addedPlayer) return;
+    if (socket.addedPlayer || started) return; // cannot join if already joined or game started
+    if (!numPlayers) {countdown(20)}; // start countdown on first added player
 
     // we store the player in the socket session for this client
-    socket.player = player;
-    socket.team = 'teamA'
-    ++numPlayers;
-    addedPlayer = true;
+    //socket.player = player;
+    socket.addedPlayer = true;
+    socket.team = teams[numPlayers % 2]; // alternates teamA and teamB
+    teamCount[numPlayers % 2] ++;
+    numPlayers++;
 
     // emit to that particular player what team he/she is on
     socket.emit('teamAssign', {
@@ -40,23 +74,30 @@ io.on('connection', function(socket) {
 
     // broadcast globally (to all clients) that a new player has connected and joined team A
     socket.broadcast.emit('newPlayer', {
-      player: socket.player,
+      //player: socket.player,
       team: socket.team,
-      numPlayers: numPlayers
+      numPlayers: numPlayers,
+      teamAPlayers: teamCount[0],
+      teamBPlayers: teamCount[1]
     });
   })
 
   socket.on('tug', function(team) {
+
+    if (!socket.addedPlayer) return; // this socket isn't playing this game!
+
     // update score based on team
-    if (team==='teamA') {
+    if (team === 'teamA') {
       teamAScore++;
     } else {
       teamBScore++;
     }
     // check for win
-    if (Math.abs(teamAScore - teamBScore) >= 10) {
-      let winner = teamAScore > teamBScore ? 'teamA' : 'teamB';
+    let weightedScores = getWeightedScores();
+    if (Math.abs(weightedScores) >= 10) {
+      let winner = weightedScores > 0 ? 'teamA' : 'teamB';
       socket.broadcast.emit('win', winner);
+      resetGame();
     } else {
     // emit updated score
       socket.broadcast.emit('updateScore', {teamA: teamAScore, teamB: teamBScore});
