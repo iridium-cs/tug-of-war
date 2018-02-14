@@ -12,13 +12,22 @@
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-.prompt {
+.prompt-wrap {
+  width: 400px;
+  height: 300px;
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  margin: -70px 0 0 -170px;
+}
+
+.super-text,
+.prompt {
+  display: block;
+  text-align: center;
+  margin: 0;
   color: white;
-  font-size: 4em;
+  font-size: 3em;
 }
 
 .team {
