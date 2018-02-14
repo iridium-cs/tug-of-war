@@ -1,6 +1,7 @@
 $(function() {
   // variables ($ indicates jquery obj)
   var socket = io(),
+    $gameboard = $(".gameboard"),
     $promptWrap = $(".prompt-wrap"),
     $promptSuper = $(".super-text"),
     $prompt = $(".prompt"),
@@ -10,6 +11,7 @@ $(function() {
     $teamDiv = undefined, //assigned team div
     gameStarted = false,
     team = undefined; // a or b
+    currGame = 'spacebar';
 
   //hide overlay at the outset
   $promptWrap.hide();
@@ -25,10 +27,18 @@ $(function() {
   });
 
   $(window).keydown(function(event) {
-    if (event.keyCode === 32) {
-      socket.emit("tug", team);
-      $teamDiv.fadeOut(10).fadeIn(10);
+    switch (currGame) {
+      case 'spacebar':
+        if (event.keyCode === 32) {
+          socket.emit("tug", team);
+          $teamDiv.fadeOut(10).fadeIn(10);
+        }
+        break;
+      case '' :
+        break;
     }
+    
+    
   });
 
   function resetState() {
@@ -69,6 +79,7 @@ $(function() {
     }
     $promptWrap.hide();
     gameStarted = true;
+    $gameboard.show();
   });
 
   socket.on("updateScore", function(scoreObj) {
@@ -91,7 +102,15 @@ $(function() {
     $prompt.text("Play again!");
     $promptWrap.fadeOut(1500);
     socket.emit("reset");
+    $gameboard.hide();
   });
 
+  socket.on("spacebar", function() {
+    $gameboard.html('PRESS SPACE BAR');
+  });
+
+  socket.on("teekey", function() {
+    $gameboard.html('PRESS SPACE BAR');
+  })
   // When anyone joins, emits "newPlayer" with {team: socket.team, numPlayers: numPlayers, teamAPlayers: teamCount[0], teamBPlayers: teamCount[1]}
 });
