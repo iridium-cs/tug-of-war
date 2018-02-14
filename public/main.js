@@ -20,7 +20,8 @@ $(function() {
   }
 
   //get team assign > assign & display team/flip joined
-  socket.on("teamassign", function(response) {
+  socket.on("teamAssign", function(response) {
+    // console.log(response);
     team = response.team; //teamA || teamB
     teamID = $(team);
     joined = true;
@@ -65,12 +66,17 @@ $(function() {
 
   // SUPPOSEDLY changes gameboard based on score
   socket.on('updateScore', function(scoreObj){
+    console.log(scoreObj);
     let totalPoints = scoreObj[teamA] + scoreObj[teamB];
     let percentageA = Math.floor(100 * scoreObj[teamA] / totalPoints);
     let percentageB = 100 - percentageA;
     $('#teamA').width(percentageA + '%');
     $('#teamB').width(percentageB + '%');
   })
+
+  socket.on('countdown', function(time) {
+    console.log(time);
+  });
 
   // When anyone joins, emits "newPlayer" with {team: socket.team, numPlayers: numPlayers, teamAPlayers: teamCount[0], teamBPlayers: teamCount[1]}
 });
