@@ -24,7 +24,7 @@ $(function() {
     prompt.text(item);
   });
   socket.on("start", function() {
-    prompt.text("Go!");
+    prompt.text("Wait until the next game starts!");
     overlay.toggle();
   });
 
@@ -62,29 +62,21 @@ $(function() {
 
   // Socket events
 
-  // server socket lets us know the game is over, who won
+  // Server socket lets us know the game is over, who won
   socket.on("win", function() {
     console.log("winner");
     socket.emit("reset");
   });
 
-  // assigns client a team
+  // Assigns client a team
   socket.on("joined", function() {
     console.log("joined team");
   });
 
-  // SUPPOSEDLY changes gameboard based on score
-
+  // Changes gameboard based on score
   socket.on("updateScore", function(scoreObj) {
-    let totalPoints = scoreObj.teamA + scoreObj.teamB;
-    let percentageA = Math.floor(100 * scoreObj.teamA / totalPoints);
-    let percentageB = 100 - percentageA;
-    $("#teamA").width(percentageA + "%");
-    $("#teamB").width(percentageB + "%");
-  });
-
-  socket.on("countdown", function(time) {
-    console.log(time);
+    $("#teamA").width(scoreObj.percentA + "%");
+    $("#teamB").width(scoreObj.percentB + "%");
   });
 
   // When anyone joins, emits "newPlayer" with {team: socket.team, numPlayers: numPlayers, teamAPlayers: teamCount[0], teamBPlayers: teamCount[1]}
