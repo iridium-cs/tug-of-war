@@ -10,15 +10,12 @@
 
   // Joins Game
   function joinGame () {
-      //socket.emit('join');
       socket.emit('join');
-    }
   }
 
   // Sends a tug for given team to server
   function tug() {
       socket.emit('tug', team);
-    }
   }
 
 
