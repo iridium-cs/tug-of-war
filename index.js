@@ -29,14 +29,14 @@ io.on('connection', function(socket) {
   function countdown(time) {
     if (time > 0) {
       socket.broadcast.emit('countdown', time); // emit new countdown num
-      setTimeout(1000, countdown(time-1)) // calls itself again after one sec
+      setTimeout(() => countdown(time-1), 1000) // calls itself again after one sec
     } else {
       started = true;
       socket.broadcast.emit('start') // tells all sockets the game has begun
     }
   }
 
-  function getWeightScores() { // weights scores, finds difference
+  function getWeightedScores() { // weights scores, finds difference
     let weightedA = teamAScore * teamCount[0] / numPlayers;
     let weightedB = teamAScore * teamCount[1] / numPlayers;
     return (weightedA - weightedB);
