@@ -1,5 +1,4 @@
 $(function() {
-
   // Create Socket
   var socket = io(),
     overlay = $(".overlay"),
@@ -20,9 +19,9 @@ $(function() {
   }
 
   //get team assign > assign & display team/flip joined
-  socket.on("teamassign", function(response) {
+  socket.on("teamAssign", function(response) {
     team = response.team; //teamA || teamB
-    teamID = $(team);
+    teamID = $("#" + team);
     joined = true;
   });
 
@@ -41,7 +40,7 @@ $(function() {
     if (event.keyCode === 32) {
       tug();
       //flash div on press
-      teamID.fadeOut(100).fadeIn(100);
+      teamID.fadeOut(10).fadeIn(10);
     }
   });
 
@@ -53,8 +52,8 @@ $(function() {
   // Socket events
 
   // server socket lets us know the game is over, who won
-  socket.on('win', function () {
-    console.log('winner');
+  socket.on("win", function() {
+    console.log("winner");
     socket.emit("reset");
   });
 
@@ -64,13 +63,13 @@ $(function() {
   });
 
   // SUPPOSEDLY changes gameboard based on score
-  socket.on('updateScore', function(scoreObj){
+  socket.on("updateScore", function(scoreObj) {
     let totalPoints = scoreObj[teamA] + scoreObj[teamB];
     let percentageA = Math.floor(100 * scoreObj[teamA] / totalPoints);
     let percentageB = 100 - percentageA;
-    $('#teamA').width(percentageA + '%');
-    $('#teamB').width(percentageB + '%');
-  })
+    $("#teamA").width(percentageA + "%");
+    $("#teamB").width(percentageB + "%");
+  });
 
   // When anyone joins, emits "newPlayer" with {team: socket.team, numPlayers: numPlayers, teamAPlayers: teamCount[0], teamBPlayers: teamCount[1]}
 });
