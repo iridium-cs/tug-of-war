@@ -1,0 +1,35 @@
+.wrapper {
+  height:100vh;
+  background-color: black;
+}
+
+.team {
+  display: inline-block;
+  height:100%;
+  text-align: center;
+  font-size: 70px;
+  color: white;
+  font-weight: 200;
+}
+
+#teamA {
+  float:left;
+  background-color: #2A2740;
+  width:50%;
+}
+
+#teamB {
+  float:right;
+  background-color: #91CBC0;
+  width:50%;
+}
+
+#join {
+  clear: both;
+  background-color: #F9D047;
+  display: block;
+  text-align: center;
+  font-size: 70px;
+  color: white;
+  z-index: 999;
+}
