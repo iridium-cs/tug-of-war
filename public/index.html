@@ -5,6 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js"></script>
   <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="./main.js"></script>
@@ -12,7 +14,18 @@
 </head>
 
 <body>
-
+  <div class="wrapper">
+    <div id="join">Join</div>
+    <div class="team" id="teamA">
+      <p class="teamID">Team A</p>
+    </div>
+    <div class="team" id="teamB">
+      <p class="teamID">Team B</p>
+    </div>
+    <div class="overlay">
+      <p class="prompt"></p>
+    </div>
+  </div>
 </body>
 
 </html>
