@@ -1,4 +1,5 @@
 $(function() {
+
   // Create Socket
   var socket = io(),
     overlay = $(".overlay"),
@@ -12,8 +13,9 @@ $(function() {
   // Callbacks that emit info to server
 
   // Joins Game
+
   function joinGame() {
-    socket.emit("join");
+    socket.emit("newPlayer");
     $("#join").hide("slow");
   }
 
@@ -50,21 +52,25 @@ $(function() {
 
   // Socket events
 
-  // gets net tugs from server socket
-  socket.on("update", function() {
-    console.log("got an update from server");
-  });
-
   // server socket lets us know the game is over, who won
-  socket.on("win", function() {
-    console.log("winner");
-    if (username) {
-      socket.emit("add user", username);
-    }
+  socket.on('win', function () {
+    console.log('winner');
+    socket.emit("reset");
   });
 
   // assigns client a team
   socket.on("joined", function() {
     console.log("joined team");
   });
+
+  // SUPPOSEDLY changes gameboard based on score
+  socket.on('updateScore', function(scoreObj){
+    let totalPoints = scoreObj[teamA] + scoreObj[teamB];
+    let percentageA = Math.floor(100 * scoreObj[teamA] / totalPoints);
+    let percentageB = 100 - percentageA;
+    $('#teamA').width(percentageA + '%');
+    $('#teamB').width(percentageB + '%');
+  })
+
+  // When anyone joins, emits "newPlayer" with {team: socket.team, numPlayers: numPlayers, teamAPlayers: teamCount[0], teamBPlayers: teamCount[1]}
 });
