@@ -1,42 +1,38 @@
 $(function() {
   // variables ($ indicates jquery obj)
   var socket = io(),
-    $overlay = $(".overlay"),
+    $promptWrap = $(".prompt-wrap"),
     $promptSuper = $(".super-text"),
     $prompt = $(".prompt"),
     $join = $("#join"),
     $teamA = $("#teamA"),
     $teamB = $("#teamB"),
     $teamDiv = undefined, //assigned team div
-    team = undefined, // a or b
-    joined = false,
-    started = false;
+    team = undefined; // a or b
 
   //hide overlay at the outset
-  $overlay.hide();
+  $promptWrap.hide();
 
   // Events
+  //join game on click
+  $join.on("click", function() {
+    socket.emit("newPlayer");
+    $join.hide("slow");
+    $promptWrap.show();
+  });
+
   $(window).keydown(function(event) {
-    if (event.keyCode === 32 && started) {
+    if (event.keyCode === 32) {
       socket.emit("tug", team);
       $teamDiv.fadeOut(10).fadeIn(10);
     }
   });
 
-  //join game on click
-  $join.on("click", function() {
-    socket.emit("newPlayer");
-    $join.hide("slow");
-    $overlay.show();
-  });
-
   function resetState() {
     $teamA.width("50%");
     $teamB.width("50%");
-    joined = false;
-    started = false;
-    $join.show("slow");
-    socket.emit("reset");
+    $teamDiv = undefined; //assigned team div
+    team = undefined;
   }
 
   // Socket events
@@ -45,35 +41,37 @@ $(function() {
     team = response.team; //teamA || teamB
     console.log(team);
     $teamDiv = $("#" + team);
-    joined = true;
   });
 
   socket.on("countdown", function(sec) {
     console.log(sec);
-    $promptSuper.text("You are on: " + team + ". Game starting in:");
+    $promptWrap.show();
     $prompt.text(sec);
+    if (team) {
+      $promptSuper.text("You are on: " + team + ". Game starting in:");
+    } else {
+      $promptSuper.text("Join the game!. Game starting in:");
+    }
   });
 
   socket.on("start", function() {
-    $overlay.hide();
-    started = true;
+    $promptWrap.hide();
   });
 
   socket.on("updateScore", function(scoreObj) {
-    let totalPoints = scoreObj.teamA + scoreObj.teamB;
-    let percentageA = Math.floor(100 * scoreObj.teamA / totalPoints);
-    let percentageB = 100 - percentageA;
-    $teamA.width(percentageA + "%");
-    $teamB.width(percentageB + "%");
+    $teamA.width(scoreObj.percentA + "%");
+    $teamB.width(scoreObj.percentB + "%");
   });
 
   //reset on end
   socket.on("win", function(winner) {
     resetState();
-    $overlay.show();
+    $join.show("slow");
+    $promptWrap.show();
     $promptSuper.text(winner + " won!");
     $prompt.text("Play again!");
-    $overlay.fadeOut(1500);
+    $promptWrap.fadeOut(1500);
+    socket.emit("reset");
   });
 
   // When anyone joins, emits "newPlayer" with {team: socket.team, numPlayers: numPlayers, teamAPlayers: teamCount[0], teamBPlayers: teamCount[1]}
