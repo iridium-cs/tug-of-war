@@ -30,15 +30,15 @@ io.on("connection", function(socket) {
 
   let gameCycle = [
     spaceBar,
-    sButton
+    teeKey
   ];
 
   function spaceBar() {
-      io.emit("spacebar");
+    io.emit("spacebar");
   }
 
-  function sButton() {
-    io.emit("sbutton");
+  function teeKey() {
+    io.emit("teekey");
   }
 
   function countdown(time) {
@@ -58,7 +58,7 @@ io.on("connection", function(socket) {
   }
 
   function cycle(gameNum, cycleCount) {
-    if (gamNum < gamesPlayed) return;
+    if (gameNum < gamesPlayed) return;
     gameCycle[cycleCount % gameCycle.length]();
     setTimeout(() => cycle(gameNum, cycleCount + 1), 15000); // calls new game after 15 secs
   }
