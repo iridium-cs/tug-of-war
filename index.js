@@ -34,11 +34,10 @@ io.on("connection", function(socket) {
     }
   }
 
-  function getWeightedScores() {
-    // weights scores, finds difference
-    let weightedA = teamAScore * teamCount[0] / numPlayers;
-    let weightedB = teamAScore * teamCount[1] / numPlayers;
-    return weightedA - weightedB;
+  function getWeightedScores() { // weights scores, finds difference
+    let weightedA = teamAScore * (teamCount[1] || 1) / numPlayers;
+    let weightedB = teamBScore * (teamCount[0] || 1) / numPlayers;
+    return (weightedA - weightedB);
   }
 
   function resetGame() {
