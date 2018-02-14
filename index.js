@@ -14,6 +14,9 @@ server.listen(port, function() {
 app.use(express.static(path.join(__dirname, "public")));
 
 // Game Data
+let secs = 10; // countdown in secs
+let winMargin = 10;
+
 let numPlayers = 0;
 let teamAScore = 0;
 let teamBScore = 0;
@@ -25,11 +28,11 @@ let teamCount = [0, 0];
 io.on("connection", function(socket) {
   function countdown(time) {
     if (time > 0) {
-      io.sockets.emit("countdown", time); // emit new countdown num
+      io.emit("countdown", time); // emit new countdown num
       setTimeout(() => countdown(time - 1), 1000); // calls itself again after one sec
     } else {
       started = true;
-      socket.broadcast.emit("start"); // tells all sockets the game has begun
+      io.emit("start"); // tells all sockets the game has begun
       console.log("starting");
     }
   }
@@ -58,7 +61,7 @@ io.on("connection", function(socket) {
   socket.on("newPlayer", function(player) {
     if (socket.addedPlayer || started) return; // cannot join if already joined or game started
     if (!numPlayers) {
-      countdown(20);
+      countdown(secs);
     } // start countdown on first added player
 
     // we store the player in the socket session for this client
@@ -74,7 +77,7 @@ io.on("connection", function(socket) {
     });
 
     // broadcast globally (to all clients) that a new player has connected and joined team A
-    socket.broadcast.emit("newPlayer", {
+    io.emit("newPlayer", {
       //player: socket.player,
       team: socket.team,
       numPlayers: numPlayers,
@@ -84,7 +87,7 @@ io.on("connection", function(socket) {
   });
 
   socket.on("tug", function(team) {
-    if (!socket.addedPlayer) return; // this socket isn't playing this game!
+    if (!socket.addedPlayer || !started) return; // this socket isn't playing this game!
 
     // update score based on team
     if (team === "teamA") {
@@ -94,15 +97,20 @@ io.on("connection", function(socket) {
     }
     // check for win
     let weightedScores = getWeightedScores();
-    if (Math.abs(weightedScores) >= 10) {
+    if (Math.abs(weightedScores) >= winMargin) {
       let winner = weightedScores > 0 ? "teamA" : "teamB";
-      socket.broadcast.emit("win", winner);
+      io.emit("win", winner);
       resetGame();
     } else {
       // emit updated score
-      socket.broadcast.emit("updateScore", {
+      let percent = (50 * weightedScores / winMargin) + 50;
+      if (percent > 100) percent = 100;
+      if (percent < 0) percent = 0;
+      io.emit("updateScore", {
         teamA: teamAScore,
-        teamB: teamBScore
+        teamB: teamBScore,
+        percentA: percent,
+        percentB: 100 - percent,
       });
     }
   });
