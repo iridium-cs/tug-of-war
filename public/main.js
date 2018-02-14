@@ -8,6 +8,7 @@ $(function() {
     $teamA = $("#teamA"),
     $teamB = $("#teamB"),
     $teamDiv = undefined, //assigned team div
+    gameStarted = false,
     team = undefined; // a or b
 
   //hide overlay at the outset
@@ -16,6 +17,8 @@ $(function() {
   // Events
   //join game on click
   $join.on("click", function() {
+    $teamA.width("50%");
+    $teamB.width("50%");
     socket.emit("newPlayer");
     $join.hide("slow");
     $promptWrap.show();
@@ -31,6 +34,7 @@ $(function() {
   function resetState() {
     $teamA.width("50%");
     $teamB.width("50%");
+    gameStarted = false;
     $teamDiv = undefined; //assigned team div
     team = undefined;
   }
@@ -47,18 +51,33 @@ $(function() {
     console.log(sec);
     $promptWrap.show();
     $prompt.text(sec);
-    if (team) {
+
+    // game started variable + team is null > wait til game ends
+    if (team && !gameStarted) {
       $promptSuper.text("You are on: " + team + ". Game starting in:");
     } else {
-      $promptSuper.text("Join the game!. Game starting in:");
+      $promptSuper.text("Join the game! Game starting in:");
     }
   });
 
   socket.on("start", function() {
+    if (!team) {
+      $promptSuper.text("Game in progress, please wait for next round");
+      $prompt.text(" ");
+      $join.hide();
+      return;
+    }
     $promptWrap.hide();
+    gameStarted = true;
   });
 
   socket.on("updateScore", function(scoreObj) {
+    if (!team) {
+      $promptWrap.show();
+      $promptSuper.text("Game in progress, please wait for next round");
+      $prompt.text(" ");
+      $join.hide();
+    }
     $teamA.width(scoreObj.percentA + "%");
     $teamB.width(scoreObj.percentB + "%");
   });
@@ -66,7 +85,7 @@ $(function() {
   //reset on end
   socket.on("win", function(winner) {
     resetState();
-    $join.show("slow");
+    $join.show();
     $promptWrap.show();
     $promptSuper.text(winner + " won!");
     $prompt.text("Play again!");
