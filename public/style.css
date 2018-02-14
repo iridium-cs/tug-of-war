@@ -1,5 +1,6 @@
 .wrapper {
   height: 100vh;
+  width:100%;
   background-color: black;
 }
 
@@ -54,4 +55,14 @@
   font-size: 70px;
   color: white;
   z-index: 999;
+}
+
+.gameboard {
+  width: 80%;
+  height:70%;
+  position: absolute;
+  top: 150px;
+  left: 10%;
+  background-color: black;
+  display:none;
 }
