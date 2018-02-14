@@ -1,4 +1,4 @@
-//$(function() {
+$(function() {
 
 
   // Create Socket
@@ -10,7 +10,7 @@
 
   // Joins Game
   function joinGame () {
-      socket.emit('join');
+      socket.emit('newPlayer');
   }
 
   // Sends a tug for given team to server
@@ -27,24 +27,17 @@
   });
 
   // tries to join game on click
-  $('.join').on('click', function() {
+  $('#join').on('click', function() {
     joinGame();
   });
 
 
   // Socket events
 
-  // gets net tugs from server socket
-  socket.on('update', function () {
-    console.log('got an update from server');
-  });
-
   // server socket lets us know the game is over, who won
   socket.on('win', function () {
     console.log('winner');
-    if (username) {
-      socket.emit('add user', username);
-    }
+    socket.emit("reset");
   });
 
   // assigns client a team
@@ -52,4 +45,14 @@
     console.log('joined team');
   });
 
-//});
+  // SUPPOSEDLY changes gameboard based on score
+  socket.on('updateScore', function(scoreObj){
+    let totalPoints = scoreObj[teamA] + scoreObj[teamB];
+    let percentageA = Math.floor(100 * scoreObj[teamA] / totalPoints);
+    let percentageB = 100 - percentageA;
+    $('#teamA').width(percentageA + '%');
+    $('#teamB').width(percentageB + '%');
+  })
+
+  // When anyone joins, emits "newPlayer" with {team: socket.team, numPlayers: numPlayers, teamAPlayers: teamCount[0], teamBPlayers: teamCount[1]}
+});
