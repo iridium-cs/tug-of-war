@@ -16,6 +16,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // Game Data
 let secs = 10; // countdown in secs
 let winMargin = 10;
+let gamesPlayed = 0;
 
 let numPlayers = 0;
 let teamAScore = 0;
@@ -26,15 +27,40 @@ let teams = ["teamA", "teamB"];
 let teamCount = [0, 0];
 
 io.on("connection", function(socket) {
+
+  let gameCycle = [
+    spaceBar,
+    sButton
+  ];
+
+  function spaceBar() {
+      io.emit("spacebar");
+  }
+
+  function sButton() {
+    io.emit("sbutton");
+  }
+
   function countdown(time) {
     if (time > 0) {
       io.emit("countdown", time); // emit new countdown num
       setTimeout(() => countdown(time - 1), 1000); // calls itself again after one sec
     } else {
-      started = true;
-      io.emit("start"); // tells all sockets the game has begun
-      console.log("starting");
+      start();
+      cycle(gamesPlayed, 0)
     }
+  }
+
+  function start() {
+    started = true;
+    io.emit("start"); // tells all sockets the game has begun
+    console.log("starting");
+  }
+
+  function cycle(gameNum, cycleCount) {
+    if (gamNum < gamesPlayed) return;
+    gameCycle[cycleCount % gameCycle.length]();
+    setTimeout(() => cycle(gameNum, cycleCount + 1), 15000); // calls new game after 15 secs
   }
 
   function getWeightedScores() { // weights scores, finds difference
@@ -51,6 +77,7 @@ io.on("connection", function(socket) {
     started = false;
     teamCount[0] = 0;
     teamCount[1] = 0;
+    gamesPlayed ++;
   }
 
   socket.on("reset", function() {
@@ -86,7 +113,7 @@ io.on("connection", function(socket) {
     });
   });
 
-  socket.on("tug", function(team) {
+  socket.on("tug", function(team, tugs) {
     if (!socket.addedPlayer || !started) return; // this socket isn't playing this game!
 
     // update score based on team
