@@ -28,7 +28,7 @@ $(function() {
     socket.emit("newPlayer");
     $join.hide("slow");
     $overlay.show();
-  }
+  });
 
   function resetState() {
     $teamA.width("50%");
@@ -38,9 +38,8 @@ $(function() {
     $join.show("slow");
     socket.emit("reset");
   }
-  
-  // Socket events
 
+  // Socket events
   //get team assign > assign & display team/flip joined
   socket.on("teamAssign", function(response) {
     team = response.team; //teamA || teamB
@@ -75,22 +74,6 @@ $(function() {
     $promptSuper.text(winner + " won!");
     $prompt.text("Play again!");
     $overlay.fadeOut(1500);
-
-  // Server socket lets us know the game is over, who won
-  socket.on("win", function() {
-    console.log("winner");
-    socket.emit("reset");
-  });
-
-  // Assigns client a team
-  socket.on("joined", function() {
-    console.log("joined team");
-  });
-
-  // Changes gameboard based on score
-  socket.on("updateScore", function(scoreObj) {
-    $("#teamA").width(scoreObj.percentA + "%");
-    $("#teamB").width(scoreObj.percentB + "%");
   });
 
   // When anyone joins, emits "newPlayer" with {team: socket.team, numPlayers: numPlayers, teamAPlayers: teamCount[0], teamBPlayers: teamCount[1]}
