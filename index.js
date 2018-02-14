@@ -64,7 +64,7 @@ io.on("connection", function(socket) {
       countdown(secs);
     } // start countdown on first added player
 
-    // we store the player in the socket session for this client
+    // we store the player information in the socket session for this client
     //socket.player = player;
     socket.addedPlayer = true;
     socket.team = teams[numPlayers % 2]; // alternates teamA and teamB
@@ -101,17 +101,16 @@ io.on("connection", function(socket) {
       let winner = weightedScores > 0 ? "teamA" : "teamB";
       io.emit("win", winner);
       resetGame();
-    } else {
-      // emit updated score
-      let percent = (50 * weightedScores / winMargin) + 50;
-      if (percent > 100) percent = 100;
-      if (percent < 0) percent = 0;
-      io.emit("updateScore", {
-        teamA: teamAScore,
-        teamB: teamBScore,
-        percentA: percent,
-        percentB: 100 - percent,
-      });
     }
+    // emit updated score
+    let percent = (50 * weightedScores / winMargin) + 50;
+    if (percent > 100) percent = 100;
+    if (percent < 0) percent = 0;
+    io.emit("updateScore", {
+      teamA: teamAScore,
+      teamB: teamBScore,
+      percentA: percent,
+      percentB: 100 - percent,
+    });
   });
 });
