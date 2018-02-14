@@ -25,10 +25,9 @@ let teams = ['teamA', 'teamB'];
 let teamCount = [0, 0];
 
 io.on('connection', function(socket) {
-
   function countdown(time) {
     if (time > 0) {
-      socket.broadcast.emit('countdown', time); // emit new countdown num
+      io.sockets.emit('countdown', time); // emit new countdown num
       setTimeout(() => countdown(time-1), 1000) // calls itself again after one sec
     } else {
       started = true;
@@ -83,7 +82,6 @@ io.on('connection', function(socket) {
   })
 
   socket.on('tug', function(team) {
-
     if (!socket.addedPlayer) return; // this socket isn't playing this game!
 
     // update score based on team
