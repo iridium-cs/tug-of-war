@@ -31,13 +31,13 @@ io.on('connection', function(socket) {
       setTimeout(() => countdown(time-1), 1000) // calls itself again after one sec
     } else {
       started = true;
-      socket.broadcast.emit('start') // tells all sockets the game has begun
+      io.emit('start') // tells all sockets the game has begun
     }
   }
 
   function getWeightedScores() { // weights scores, finds difference
     let weightedA = teamAScore * teamCount[0] / numPlayers;
-    let weightedB = teamAScore * teamCount[1] / numPlayers;
+    let weightedB = teamBScore * teamCount[1] / numPlayers;
     return (weightedA - weightedB);
   }
 
@@ -72,7 +72,7 @@ io.on('connection', function(socket) {
     });
 
     // broadcast globally (to all clients) that a new player has connected and joined team A
-    socket.broadcast.emit('newPlayer', {
+    io.emit('newPlayer', {
       //player: socket.player,
       team: socket.team,
       numPlayers: numPlayers,
@@ -82,7 +82,8 @@ io.on('connection', function(socket) {
   })
 
   socket.on('tug', function(team) {
-    if (!socket.addedPlayer) return; // this socket isn't playing this game!
+
+    if (!socket.addedPlayer || !started) return; // this socket isn't playing this game!
 
     // update score based on team
     if (team === 'teamA') {
@@ -92,13 +93,15 @@ io.on('connection', function(socket) {
     }
     // check for win
     let weightedScores = getWeightedScores();
+    console.log('w', weightedScores);
     if (Math.abs(weightedScores) >= 10) {
       let winner = weightedScores > 0 ? 'teamA' : 'teamB';
-      socket.broadcast.emit('win', winner);
+      console.log('winner', winner)
+      io.emit('win', winner);
       resetGame();
     } else {
     // emit updated score
-      socket.broadcast.emit('updateScore', {teamA: teamAScore, teamB: teamBScore});
+      io.emit('updateScore', {teamA: teamAScore, teamB: teamBScore});
     }
   });
 });
