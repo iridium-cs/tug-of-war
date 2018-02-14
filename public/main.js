@@ -65,8 +65,8 @@ $(function() {
   // SUPPOSEDLY changes gameboard based on score
 
   socket.on("updateScore", function(scoreObj) {
-    let totalPoints = scoreObj[teamA] + scoreObj[teamB];
-    let percentageA = Math.floor(100 * scoreObj[teamA] / totalPoints);
+    let totalPoints = scoreObj.teamA + scoreObj.teamB;
+    let percentageA = Math.floor(100 * scoreObj.teamA / totalPoints);
     let percentageB = 100 - percentageA;
     $("#teamA").width(percentageA + "%");
     $("#teamB").width(percentageB + "%");
