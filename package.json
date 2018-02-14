@@ -4,6 +4,7 @@
   "description": "websocket tug of war",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon index.js",
     "test": "start"
   },
   "repository": {
@@ -21,5 +22,11 @@
   "bugs": {
     "url": "https://github.com/iridium-cs/tug-of-war/issues"
   },
-  "homepage": "https://github.com/iridium-cs/tug-of-war#readme"
+  "homepage": "https://github.com/iridium-cs/tug-of-war#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "nodemon": "^1.14.12",
+    "socket-io": "^1.0.0",
+    "socket.io": "^2.0.4"
+  }
 }
