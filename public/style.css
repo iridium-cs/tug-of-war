@@ -1,6 +1,6 @@
 .wrapper {
   height: 100vh;
-  width:100%;
+  width: 100%;
   background-color: black;
 }
 
@@ -59,11 +59,12 @@
 
 .gameboard {
   width: 80%;
-  height:70%;
+  height: 70%;
   position: absolute;
   top: 150px;
   left: 10%;
   background-color: black;
-  display:none;
+  display: none;
   color: white;
+  text-align: center;
 }
