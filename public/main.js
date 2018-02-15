@@ -32,6 +32,7 @@ $(function() {
         {top: 450, left: 250}
       ]
     }
+  }
 
   // text game variables
   let textGameInfo = {
@@ -75,8 +76,7 @@ $(function() {
         if (event.keyCode === 40) {
           socket.emit('moveEatMan', 'down');
         }
-        break;
-    }  
+        break;  
       case "teeKey":
         if (event.keyCode === 84) {
           socket.emit("tug", team);
