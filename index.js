@@ -35,6 +35,7 @@ let teamCount = [0, 0];
 io.on("connection", function(socket) {
 
   let gameCycle = [
+    clickPic,
     typeGame,
     spaceBar,
     teeKey
@@ -42,6 +43,13 @@ io.on("connection", function(socket) {
 
   function spaceBar() {
     io.emit("spacebar");
+  }
+
+  function clickPic() {
+    io.emit("clickPic");
+    setTimeout(function() {
+      io.emit("hidePic");
+    }, cycleTimer);
   }
 
   function teeKey() {

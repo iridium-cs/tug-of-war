@@ -8,6 +8,7 @@ $(function() {
     $join = $("#join"),
     $teamA = $("#teamA"),
     $teamB = $("#teamB"),
+    $clickPic = $(".click-pic"),
     $teamDiv = undefined, //assigned team div
     team = undefined, // a or b
     currGame = "",
@@ -21,6 +22,7 @@ $(function() {
 
   //hide overlay at the outset
   $promptWrap.hide();
+  $clickPic.hide();
 
   // Events
   //join game on click
@@ -65,6 +67,23 @@ $(function() {
         break;
     }
   });
+
+  $clickPic.click(function() {
+    if (currGame === 'clickPic') {
+      console.log('clicked pic!');
+      socket.emit("tug", team);
+      movePic();
+    }
+  });
+
+  function movePic() {
+    let left = Math.floor(Math.random() * ($(document).width() - 400)) + 200;
+    let top = Math.floor(Math.random() * ($(document).height() - 400)) + 200;
+    let position = $clickPic.position();
+    position.left = left
+    position.top = top;
+    $clickPic.offset(position);
+  }
 
   function resetState() {
     $teamA.width("50%");
@@ -143,6 +162,16 @@ $(function() {
     currGame = "teeKey";
     $gameboard.html('PRESS "T"');
   });
+
+  socket.on("clickPic", function() {
+    currGame = "clickPic";
+    $gameboard.html('CLICK THE PIC!');
+    $clickPic.show();
+  })
+
+  socket.on("hidePic", function() {
+    $clickPic.hide();
+  })
 
   socket.on("typeGame", function(text) {
     let textHTML = "";
