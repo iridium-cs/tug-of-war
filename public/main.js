@@ -11,14 +11,14 @@ $(function() {
     $clickPic = $(".click-pic"),
     $teamDiv = undefined, //assigned team div
     team = undefined, // a or b
-    currGame = '',
+    currGame = "",
     gameStarted = false;
 
   // text game variables
   let textGameInfo = {
-    text: '',
+    text: "",
     index: 0
-  }
+  };
 
   //hide overlay at the outset
   $promptWrap.hide();
@@ -34,29 +34,34 @@ $(function() {
     $promptWrap.show();
   });
 
-  $(window).keydown(function(event) {
+  $(window).keyup(function(event) {
     switch (currGame) {
-      case 'spacebar':
+      case "spacebar":
         if (event.keyCode === 32) {
           socket.emit("tug", team);
           $teamDiv.fadeOut(10).fadeIn(10);
         }
         break;
-      case 'teeKey' :
+      case "teeKey":
         if (event.keyCode === 84) {
           socket.emit("tug", team);
           $teamDiv.fadeOut(10).fadeIn(10);
         }
         break;
-      case 'typingGame' :
+      case "typingGame":
         console.log(textGameInfo.text.charAt(textGameInfo.index));
         let matchCode = textGameInfo.text.charCodeAt(textGameInfo.index);
-        if (!event.shiftKey && matchCode < 123 && matchCode > 96) matchCode -= 32;
+        if (!event.shiftKey && matchCode < 123 && matchCode > 96)
+          matchCode -= 32;
         if (event.keyCode === matchCode || matchCode < 65 || matchCode > 122) {
           socket.emit("tug", team);
-          $(`.text${textGameInfo.index}`).css('background-color', 'transparent');
-          textGameInfo.index = (textGameInfo.index + 1) % textGameInfo.text.length;
-          $(`.text${textGameInfo.index}`).css('background-color', 'lightblue');
+          $(`.text${textGameInfo.index}`).css(
+            "background-color",
+            "transparent"
+          );
+          textGameInfo.index =
+            (textGameInfo.index + 1) % textGameInfo.text.length;
+          $(`.text${textGameInfo.index}`).css("background-color", "lightblue");
           $teamDiv.fadeOut(10).fadeIn(10);
         }
         break;
@@ -84,7 +89,7 @@ $(function() {
     $teamA.width("50%");
     $teamB.width("50%");
     gameStarted = false;
-    currGame = '';
+    currGame = "";
     $teamDiv = undefined; //assigned team div
     team = undefined;
   }
@@ -150,13 +155,13 @@ $(function() {
 
   socket.on("spacebar", function() {
     currGame = "spacebar";
-    $gameboard.html('PRESS SPACE BAR');
+    $gameboard.html("PRESS SPACE BAR");
   });
 
   socket.on("teekey", function() {
     currGame = "teeKey";
     $gameboard.html('PRESS "T"');
-  })
+  });
 
   socket.on("clickPic", function() {
     currGame = "clickPic";
@@ -169,11 +174,11 @@ $(function() {
   })
 
   socket.on("typeGame", function(text) {
-    let textHTML = '';
+    let textHTML = "";
     let i = 0;
     for (t of text) {
-      textHTML += (`<span class="text${i}">${t}</span>`);
-      i ++;
+      textHTML += `<span class="text${i}">${t}</span>`;
+      i++;
     }
 
     textGameInfo.text = text;
@@ -182,7 +187,7 @@ $(function() {
     currGame = "typingGame";
 
     $gameboard.html(textHTML);
-    $('.text0').css('background-color', 'lightblue');
-  })
+    $(".text0").css("background-color", "lightblue");
+  });
   // When anyone joins, emits "newPlayer" with {team: socket.team, numPlayers: numPlayers, teamAPlayers: teamCount[0], teamBPlayers: teamCount[1]}
 });
