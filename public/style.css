@@ -1,6 +1,6 @@
 .wrapper {
   height: 100vh;
-  width:100%;
+  width: 100%;
   background-color: black;
 }
 
@@ -11,6 +11,18 @@
   top: 50%;
   left: 50%;
   margin: -70px 0 0 -170px;
+}
+
+.click-pic {
+  background-image: url("https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAyEAAAAJDQ3ODBjYzBkLTU1NTEtNGJkOS05NTE5LWQzOGFiODE5ZDBjOA.jpg");
+  border-radius: 50%;
+  width: 200px;
+  height: 200px;
+  z-index: 800;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: none;
 }
 
 .super-text,
@@ -59,15 +71,16 @@
 
 .gameboard {
   width: 80%;
-  height:70%;
+  height: 70%;
   position: absolute;
   top: 150px;
   left: 10%;
   background-color: black;
-  display:none;
+  display: none;
   color: white;
   text-align: center;
 }
+
 
 #head {
   position: absolute;
@@ -92,3 +105,5 @@
 .blockB {
   background-color: #91cbc0;
 }
+
+

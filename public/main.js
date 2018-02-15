@@ -8,9 +8,10 @@ $(function() {
     $join = $("#join"),
     $teamA = $("#teamA"),
     $teamB = $("#teamB"),
+    $clickPic = $(".click-pic"),
     $teamDiv = undefined, //assigned team div
     team = undefined, // a or b
-    currGame = '',
+    currGame = "",
     gameStarted = false;
 
   let eatBlockGlobals = {
@@ -31,10 +32,16 @@ $(function() {
         {top: 450, left: 250}
       ]
     }
+
+  // text game variables
+  let textGameInfo = {
+    text: "",
+    index: 0
   };
 
   //hide overlay at the outset
   $promptWrap.hide();
+  $clickPic.hide();
 
   // Events
   //join game on click
@@ -46,14 +53,15 @@ $(function() {
     $promptWrap.show();
   });
 
-  $(window).keydown(function(event) {
+  $(window).keyup(function(event) {
     switch (currGame) {
-      case 'spacebar':
+      case "spacebar":
         if (event.keyCode === 32) {
           socket.emit("tug", team);
           $teamDiv.fadeOut(10).fadeIn(10);
         }
         break;
+
       case 'eatBlock' :
         if (event.keyCode === 37) {
           socket.emit('moveEatMan', 'left');
@@ -69,12 +77,54 @@ $(function() {
         }
         break;
     }  
+      case "teeKey":
+        if (event.keyCode === 84) {
+          socket.emit("tug", team);
+          $teamDiv.fadeOut(10).fadeIn(10);
+        }
+        break;
+      case "typingGame":
+        console.log(textGameInfo.text.charAt(textGameInfo.index));
+        let matchCode = textGameInfo.text.charCodeAt(textGameInfo.index);
+        if (!event.shiftKey && matchCode < 123 && matchCode > 96)
+          matchCode -= 32;
+        if (event.keyCode === matchCode || matchCode < 65 || matchCode > 122) {
+          socket.emit("tug", team);
+          $(`.text${textGameInfo.index}`).css(
+            "background-color",
+            "transparent"
+          );
+          textGameInfo.index =
+            (textGameInfo.index + 1) % textGameInfo.text.length;
+          $(`.text${textGameInfo.index}`).css("background-color", "lightblue");
+          $teamDiv.fadeOut(10).fadeIn(10);
+        }
+        break;
+    }
   });
+
+  $clickPic.click(function() {
+    if (currGame === 'clickPic') {
+      console.log('clicked pic!');
+      socket.emit("tug", team);
+      movePic();
+    }
+  });
+
+  function movePic() {
+    let left = Math.floor(Math.random() * ($(document).width() - 400)) + 200;
+    let top = Math.floor(Math.random() * ($(document).height() - 400)) + 200;
+    let position = $clickPic.position();
+    position.left = left
+    position.top = top;
+    $clickPic.offset(position);
+  }
 
   function resetState() {
     $teamA.width("50%");
     $teamB.width("50%");
     gameStarted = false;
+    currGame = "";
     $teamDiv = undefined; //assigned team div
     team = undefined;
   }
@@ -117,6 +167,9 @@ $(function() {
   });
 
   socket.on("updateScore", function(scoreObj) {
+    if (!gameStarted) {
+      return;
+    }
     if (!team) {
       $promptWrap.show();
       $promptSuper.text("Game in progress, please wait for next round");
@@ -141,13 +194,20 @@ $(function() {
 
   socket.on("spacebar", function() {
     currGame = "spacebar";
-    $gameboard.html('PRESS SPACE BAR');
+    $gameboard.html("PRESS SPACE BAR");
   });
 
   socket.on("teekey", function() {
     currGame = "teeKey";
     $gameboard.html('PRESS "T"');
+  });
+
+  socket.on("clickPic", function() {
+    currGame = "clickPic";
+    $gameboard.html('CLICK THE PIC!');
+    $clickPic.show();
   })
+
 
   socket.on("eatBlock", function() {
     currGame = "eatBlock";
@@ -183,4 +243,26 @@ $(function() {
       }
     });
   });
+
+  socket.on("hidePic", function() {
+    $clickPic.hide();
+  })
+
+  socket.on("typeGame", function(text) {
+    let textHTML = "";
+    let i = 0;
+    for (t of text) {
+      textHTML += `<span class="text${i}">${t}</span>`;
+      i++;
+    }
+
+    textGameInfo.text = text;
+    textGameInfo.index = 0;
+
+    currGame = "typingGame";
+
+    $gameboard.html(textHTML);
+    $(".text0").css("background-color", "lightblue");
+  });
+  // When anyone joins, emits "newPlayer" with {team: socket.team, numPlayers: numPlayers, teamAPlayers: teamCount[0], teamBPlayers: teamCount[1]}
 });
