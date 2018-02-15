@@ -22,7 +22,7 @@ let text = [
 let secs = 10; // countdown in secs
 let winMargin = 100;
 let gamesPlayed = 0;
-let cycleTimer = 150000;
+let cycleTimer = 15000;
 
 let numPlayers = 0;
 let teamAScore = 0;
