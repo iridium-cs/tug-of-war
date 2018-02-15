@@ -26,12 +26,19 @@ let started = false;
 let teams = ["teamA", "teamB"];
 let teamCount = [0, 0];
 
+let eatManPosition = {top: 300, left: 600};
+
 io.on("connection", function(socket) {
 
   let gameCycle = [
+    eatBlock,
     spaceBar,
     teeKey
   ];
+
+  function eatBlock() {
+    io.emit("eatBlock");
+  }
 
   function spaceBar() {
     io.emit("spacebar");
@@ -139,5 +146,18 @@ io.on("connection", function(socket) {
       percentA: percent,
       percentB: 100 - percent,
     });
+  });
+
+  socket.on('moveEatMan', function(direction) {
+    if (direction === 'right'){
+      eatManPosition.left+=50;
+    } else if (direction === 'left') {
+      eatManPosition.left-=50;
+    } else if (direction === 'up') {
+      eatManPosition.top-=50;
+    } else if (direction === 'down') {
+      eatManPosition.top+=50;
+    }
+    io.emit('moveEatMan', eatManPosition); 
   });
 });
