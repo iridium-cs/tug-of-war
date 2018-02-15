@@ -10,7 +10,7 @@ $(function() {
     $teamB = $("#teamB"),
     $teamDiv = undefined, //assigned team div
     team = undefined, // a or b
-    currGame = '',
+    currGame = "",
     gameStarted = false;
 
   //hide overlay at the outset
@@ -26,23 +26,21 @@ $(function() {
     $promptWrap.show();
   });
 
-  $(window).keydown(function(event) {
+  $(window).keyup(function(event) {
     switch (currGame) {
-      case 'spacebar':
+      case "spacebar":
         if (event.keyCode === 32) {
           socket.emit("tug", team);
           $teamDiv.fadeOut(10).fadeIn(10);
         }
         break;
-      case 'teeKey' :
+      case "teeKey":
         if (event.keyCode === 84) {
           socket.emit("tug", team);
           $teamDiv.fadeOut(10).fadeIn(10);
         }
         break;
     }
-    
-    
   });
 
   function resetState() {
@@ -114,12 +112,12 @@ $(function() {
 
   socket.on("spacebar", function() {
     currGame = "spacebar";
-    $gameboard.html('PRESS SPACE BAR');
+    $gameboard.html("PRESS SPACE BAR");
   });
 
   socket.on("teekey", function() {
     currGame = "teeKey";
     $gameboard.html('PRESS "T"');
-  })
+  });
   // When anyone joins, emits "newPlayer" with {team: socket.team, numPlayers: numPlayers, teamAPlayers: teamCount[0], teamBPlayers: teamCount[1]}
 });
