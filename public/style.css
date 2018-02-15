@@ -79,6 +79,7 @@
   display: none;
   color: white;
   text-align: center;
+  font-size: 25px;
 }
 
 
@@ -105,5 +106,3 @@
 .blockB {
   background-color: #91cbc0;
 }
-
-

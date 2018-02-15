@@ -40,6 +40,7 @@ io.on("connection", function(socket) {
     eatBlock,
     clickPic,
     typeGame,
+    dance,
     spaceBar,
   ];
 
@@ -60,6 +61,10 @@ io.on("connection", function(socket) {
 
   function teeKey() {
     io.emit("teekey");
+  }
+
+  function dance() {
+      io.emit("dance");
   }
 
   function typeGame() {
@@ -176,6 +181,6 @@ io.on("connection", function(socket) {
     } else if (direction === 'down') {
       eatManPosition.top+=50;
     }
-    io.emit('moveEatMan', eatManPosition); 
+    io.emit('moveEatMan', eatManPosition);
   });
 });
