@@ -80,3 +80,30 @@
   color: white;
   text-align: center;
 }
+
+
+#head {
+  position: absolute;
+  height: 50px;
+  width: 50px;
+  top: 300;
+  left: 600;
+  background-color: fuchsia;
+}
+
+.blockA, .blockB {
+  position: absolute;
+  height: 50px;
+  width: 50px;
+  font-size: 1em;
+}
+
+.blockA {
+  background-color: #2a2740;
+}
+
+.blockB {
+  background-color: #91cbc0;
+}
+
+
