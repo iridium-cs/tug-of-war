@@ -13,10 +13,16 @@ server.listen(port, function() {
 // Routing
 app.use(express.static(path.join(__dirname, "public")));
 
+let text = [
+  "It is a long established fact, that a reader will",
+  "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected"
+];
+
 // Game Data
 let secs = 10; // countdown in secs
-let winMargin = 10;
+let winMargin = 100;
 let gamesPlayed = 0;
+let cycleTimer = 15000;
 
 let numPlayers = 0;
 let teamAScore = 0;
@@ -29,6 +35,7 @@ let teamCount = [0, 0];
 io.on("connection", function(socket) {
 
   let gameCycle = [
+    typeGame,
     spaceBar,
     teeKey
   ];
@@ -39,6 +46,10 @@ io.on("connection", function(socket) {
 
   function teeKey() {
     io.emit("teekey");
+  }
+
+  function typeGame() {
+    io.emit("typeGame", text[Math.floor(Math.random() * text.length)]);
   }
 
   function countdown(time) {
@@ -60,7 +71,7 @@ io.on("connection", function(socket) {
   function cycle(gameNum, cycleCount) {
     if (gameNum < gamesPlayed) return;
     gameCycle[cycleCount % gameCycle.length]();
-    setTimeout(() => cycle(gameNum, cycleCount + 1), 15000); // calls new game after 15 secs
+    setTimeout(() => cycle(gameNum, cycleCount + 1), cycleTimer); // calls new game after 15 secs
   }
 
   function getWeightedScores() { // weights scores, finds difference
