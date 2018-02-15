@@ -76,7 +76,7 @@ $(function() {
         if (event.keyCode === 40) {
           socket.emit('moveEatMan', 'down');
         }
-        break;  
+        break;
       case "teeKey":
         if (event.keyCode === 84) {
           socket.emit("tug", team);
@@ -118,6 +118,14 @@ $(function() {
     position.left = left
     position.top = top;
     $clickPic.offset(position);
+  }
+
+  function randomDance() {
+    if (currGame === 'dance') {
+      socket.emit("tug", team);
+      let randTime = Math.floor(Math.random() * 1500);
+      setTimeout(randomDance, randTime);
+    }
   }
 
   function resetState() {
@@ -243,6 +251,12 @@ $(function() {
       }
     });
   });
+
+  socket.on("dance", function() {
+    currGame = 'dance';
+    $gameboard.html('DANCE!')
+    randomDance();
+  })
 
   socket.on("hidePic", function() {
     $clickPic.hide();
